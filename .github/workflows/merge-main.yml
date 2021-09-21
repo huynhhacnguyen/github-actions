@@ -11,14 +11,16 @@ jobs:
 
       - name: Merge main -> release
         uses: devmasx/merge-branch@1.4.0
+        id: main_to_release
         with:
           type: now
           from_branch: main
           target_branch: release
           github_token: ${{ github.token }}
 
-      - uses: ravsamhq/notify-slack-action@v1
-        if: ${{ failure() }}
+      - name: Notify main to release failure
+        uses: ravsamhq/notify-slack-action@v1
+        if: ${{ steps.main_to_release.outputs.status == 'failure' }}
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
@@ -31,19 +33,21 @@ jobs:
       
       - name: Merge release -> develop
         uses: devmasx/merge-branch@1.4.0
+        id: release_to_develop
         with:
           type: now
           from_branch: release
           target_branch: develop
           github_token: ${{ github.token }}
 
-      - uses: ravsamhq/notify-slack-action@v1
-        if: ${{ failure() }}
+      - name: Notify release to develop failure
+        uses: ravsamhq/notify-slack-action@v1
+        if: ${{ steps.release_to_develop.outputs.status == 'failure' }}
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
           notification_title: 'Syncing from release to develop has {status_message}'
-          message_format: '{emoji} *Syncing from release to develop has* {status_message} by ${{ github.event.pusher.name }} at *${{ github.event.head_commit.message }}*'
+          message_format: '{emoji} *Syncing from release to develop has* {status_message} by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
           footer: 'Resolve conflicts at <{repo_url}/compare/develop...release|{repo}>'
           notify_when: 'failure'
         env:
