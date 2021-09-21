@@ -12,6 +12,7 @@ jobs:
       - name: Merge main -> release
         uses: devmasx/merge-branch@1.4.0
         id: main_to_release
+        continue-on-error: true
         with:
           type: now
           from_branch: main
@@ -32,7 +33,7 @@ jobs:
 
       - name: Notify main to release failure
         uses: ravsamhq/notify-slack-action@v1
-        if: steps.main_to_release.outcome != 'success'
+        if: steps.main_to_release.outcome == 'failure'
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
@@ -43,6 +44,8 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       
       - name: Merge release -> develop
+        if: steps.main_to_release.outcome == 'success'
+        continue-on-error: true
         uses: devmasx/merge-branch@1.4.0
         id: release_to_develop
         with:
@@ -53,7 +56,7 @@ jobs:
 
       - name: Notify release to develop failure
         uses: ravsamhq/notify-slack-action@v1
-        if: steps.release_to_develop.outcome != 'success'
+        if: steps.release_to_develop.outcome == 'failure'
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
