@@ -17,8 +17,6 @@ jobs:
       - name: Sync main to release
         id: main_to_release
         continue-on-error: true
-        with:
-          fetch-depth: 0
         run: |
           git checkout release
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
