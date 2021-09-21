@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@master
 
       - name: Merge main -> release
-        uses: devmasx/merge-branch@v1.4.0
+        uses: devmasx/merge-branch@1.4.0
         with:
           type: now
           from_branch: main
@@ -18,7 +18,7 @@ jobs:
           github_token: ${{ github.token }}
 
       - name: Merge release -> develop
-        uses: devmasx/merge-branch@v1.4.0
+        uses: devmasx/merge-branch@1.4.0
         with:
           type: now
           from_branch: staging
