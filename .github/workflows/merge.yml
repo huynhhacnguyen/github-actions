@@ -1,0 +1,60 @@
+name: Sync multiple branches
+on:
+  push:
+    branches:
+      - 'main'
+jobs:
+  sync-main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Sync main to release
+        id: main_to_release
+        continue-on-error: true
+        run: |
+          git checkout release
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git merge main -q -m "Merged by GitHub action"
+          git push
+
+      - name: Notify main to release failure
+        uses: ravsamhq/notify-slack-action@v1
+        if: steps.main_to_release.outcome == 'failure'
+        with:
+          status: ${{ job.status }}
+          token: ${{ github.token }}
+          notification_title: 'Syncing from main to release has failed'
+          message_format: '*Syncing from main to release has failed* by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
+          footer: 'Resolve conflicts at <{repo_url}/compare/release...main|{repo}>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Sync release to develop
+        id: release_to_develop
+        if: steps.main_to_release.outcome == 'success' || github.ref == 'refs/heads/release'
+        continue-on-error: true
+        run: |
+          git checkout develop
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git merge release -q -m "Merged by GitHub action"
+          git push
+
+      - name: Notify release to develop failure
+        uses: ravsamhq/notify-slack-action@v1
+        if: steps.release_to_develop.outcome == 'failure'
+        with:
+          status: ${{ job.status }}
+          token: ${{ github.token }}
+          notification_title: 'Syncing from release to develop has failed'
+          message_format: '*Syncing from release to develop has failed* by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
+          footer: 'Resolve conflicts at <{repo_url}/compare/develop...release|{repo}>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
