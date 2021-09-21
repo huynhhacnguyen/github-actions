@@ -23,7 +23,7 @@ jobs:
           status: ${{ job.status }}
           token: ${{ github.token }}
           notification_title: 'Syncing from main to release has {status_message}'
-          message_format: '{emoji} *{workflow}* {status_message} by {github.event.pusher.name}'
+          message_format: '{emoji} *{workflow}* {status_message} by ${{ github.event.pusher.name }}'
           footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
           notify_when: 'failure'
         env:
