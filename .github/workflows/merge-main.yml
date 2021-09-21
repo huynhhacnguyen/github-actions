@@ -4,7 +4,7 @@ on:
     branches:
       - 'main'
 jobs:
-  sync-branch:
+  sync-main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -16,6 +16,18 @@ jobs:
           from_branch: main
           target_branch: release
           github_token: ${{ github.token }}
+
+      - uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }}
+          token: ${{ github.token }}
+          notification_title: '{workflow} has {status_message}'
+          message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
+          footer: 'Linked Repo <{repo_url}|{repo}> | <{workflow_url}|View Workflow>'
+          notify_when: 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       
       - name: Merge release -> develop
         uses: devmasx/merge-branch@1.4.0
