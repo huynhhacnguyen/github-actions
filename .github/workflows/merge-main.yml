@@ -15,3 +15,4 @@ jobs:
           type: now
           from_branch: main
           target_branch: release
+          github_token: ${{ github.token }}
