@@ -20,7 +20,7 @@ jobs:
 
       - name: Notify main to release failure
         uses: ravsamhq/notify-slack-action@v1
-        if: ${{ steps.main_to_release.outcome == 'failure' }}
+        if: steps.main_to_release.outcome != 'success'
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
@@ -42,7 +42,7 @@ jobs:
 
       - name: Notify release to develop failure
         uses: ravsamhq/notify-slack-action@v1
-        if: ${{ steps.release_to_develop.outcome == 'failure' }}
+        if: steps.release_to_develop.outcome != 'success'
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
