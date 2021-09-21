@@ -9,8 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Sync main to release
+      - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Sync main to release
         id: main_to_release
         continue-on-error: true
         with:
@@ -35,11 +39,8 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Sync release to develop
-        uses: actions/checkout@v2
         id: release_to_develop
         continue-on-error: true
-        with:
-          fetch-depth: 0
         run: |
           git checkout develop
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
