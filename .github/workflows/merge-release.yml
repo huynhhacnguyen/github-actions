@@ -4,7 +4,7 @@ on:
     branches:
       - 'release'
 jobs:
-  sync-branch:
+  sync-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
