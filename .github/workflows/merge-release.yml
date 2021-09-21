@@ -23,7 +23,7 @@ jobs:
           status: ${{ job.status }}
           token: ${{ github.token }}
           notification_title: 'Syncing from release to develop has {status_message}'
-          message_format: '{emoji} *Syncing from release to develop has* {status_message} by ${{ github.event.pusher.name }}'
+          message_format: '{emoji} *Syncing from release to develop has* {status_message} by ${{ github.event.pusher.name }} at *${{ github.event.head_commit.message }}*'
           footer: 'Resolve conflicts at <{repo_url}/compare/develop...release|{repo}>'
           notify_when: 'failure'
         env:
