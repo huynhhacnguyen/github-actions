@@ -18,12 +18,12 @@ jobs:
           github_token: ${{ github.token }}
 
       - uses: ravsamhq/notify-slack-action@v1
-        if: always()
+        if: ${{ failure() }}
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
           notification_title: 'Syncing from main to release has {status_message}'
-          message_format: '{emoji} *Syncing from main to release has* {status_message} by ${{ github.event.pusher.name }} at *${{ github.event.head_commit.message }}*'
+          message_format: '{emoji} *Syncing from main to release has* {status_message} by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
           footer: 'Resolve conflicts at <{repo_url}/compare/release...main|{repo}>'
           notify_when: 'failure'
         env:
@@ -38,7 +38,7 @@ jobs:
           github_token: ${{ github.token }}
 
       - uses: ravsamhq/notify-slack-action@v1
-        if: always()
+        if: ${{ failure() }}
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
