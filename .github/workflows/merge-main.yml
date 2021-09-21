@@ -18,6 +18,12 @@ jobs:
           target_branch: release
           github_token: ${{ github.token }}
 
+      - name: Dump steps context
+        if: always()
+        env:
+          STEPS_CONTEXT: ${{ toJSON(steps) }}
+        run: echo "$STEPS_CONTEXT"
+
       - name: Notify main to release failure
         uses: ravsamhq/notify-slack-action@v1
         if: ${{ steps.main_to_release.outcome }} != 'success'
