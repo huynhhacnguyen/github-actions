@@ -38,6 +38,7 @@ jobs:
 
       - name: Sync release to develop
         id: release_to_develop
+        if: steps.main_to_release.outcome == 'success'
         continue-on-error: true
         run: |
           git checkout develop
