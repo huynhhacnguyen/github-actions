@@ -25,14 +25,14 @@ jobs:
         run: echo "$STEPS_CONTEXT"
 
       - name: Dump step context
-        if: always()
+        if: steps.main_to_release.outcome == 'failure'
         env:
           STEPS_CONTEXT: ${{ toJSON(steps.main_to_release.outcome) }}
         run: echo "$STEPS_CONTEXT"
 
       - name: Notify main to release failure
         uses: ravsamhq/notify-slack-action@v1
-        if: always() && steps.main_to_release.outcome != 'success'
+        if: steps.main_to_release.outcome != 'success'
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
@@ -53,7 +53,7 @@ jobs:
 
       - name: Notify release to develop failure
         uses: ravsamhq/notify-slack-action@v1
-        if: always() && steps.release_to_develop.outcome != 'success'
+        if: steps.release_to_develop.outcome != 'success'
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
