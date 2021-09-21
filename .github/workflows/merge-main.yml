@@ -37,8 +37,8 @@ jobs:
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
-          notification_title: 'Syncing from main to release has {status_message}'
-          message_format: '{emoji} *Syncing from main to release has* {status_message} by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
+          notification_title: 'Syncing from main to release has failed'
+          message_format: '*Syncing from main to release has failed* by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
           footer: 'Resolve conflicts at <{repo_url}/compare/release...main|{repo}>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -60,8 +60,8 @@ jobs:
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
-          notification_title: 'Syncing from release to develop has {status_message}'
-          message_format: '{emoji} *Syncing from release to develop has* {status_message} by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
+          notification_title: 'Syncing from release to develop has failed'
+          message_format: '*Syncing from release to develop has failed* by ${{ github.event.pusher.name }} at *${{ github.event.commits[0].message }}*'
           footer: 'Resolve conflicts at <{repo_url}/compare/develop...release|{repo}>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
