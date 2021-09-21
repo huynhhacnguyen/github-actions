@@ -18,7 +18,7 @@ jobs:
           github_token: ${{ github.token }}
 
       - uses: ravsamhq/notify-slack-action@v1
-        if: always()
+        if: ${{ failure() }}
         with:
           status: ${{ job.status }}
           token: ${{ github.token }}
