@@ -16,3 +16,15 @@ jobs:
           from_branch: release
           target_branch: develop
           github_token: ${{ github.token }}
+
+      - uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          status: ${{ job.status }}
+          token: ${{ github.token }}
+          notification_title: 'Syncing from release to develop has {status_message}'
+          message_format: '{emoji} *Syncing from release to develop has* {status_message} by ${{ github.event.pusher.name }}'
+          footer: 'Resolve conflicts at <{repo_url}/compare/develop...release|{repo}>'
+          notify_when: 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
