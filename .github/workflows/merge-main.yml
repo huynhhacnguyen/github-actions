@@ -9,27 +9,18 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Merge main -> release
-        uses: devmasx/merge-branch@1.4.0
+      - name: Sync main to release
+        uses: actions/checkout@v2
         id: main_to_release
         continue-on-error: true
         with:
-          type: now
-          from_branch: main
-          target_branch: release
-          github_token: ${{ github.token }}
-
-      - name: Dump steps context
-        if: always()
-        env:
-          STEPS_CONTEXT: ${{ toJSON(steps) }}
-        run: echo "$STEPS_CONTEXT"
-
-      - name: Dump step context
-        if: steps.main_to_release.outcome == 'failure'
-        env:
-          STEPS_CONTEXT: ${{ toJSON(steps.main_to_release.outcome) }}
-        run: echo "$STEPS_CONTEXT"
+          fetch-depth: 0
+        run: |
+          git checkout release
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git merge main -q -m "Merged by GitHub action"
+          git push
 
       - name: Notify main to release failure
         uses: ravsamhq/notify-slack-action@v1
@@ -42,17 +33,19 @@ jobs:
           footer: 'Resolve conflicts at <{repo_url}/compare/release...main|{repo}>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      
-      - name: Merge release -> develop
-        if: steps.main_to_release.outcome == 'success'
-        continue-on-error: true
-        uses: devmasx/merge-branch@1.4.0
+
+      - name: Sync release to develop
+        uses: actions/checkout@v2
         id: release_to_develop
+        continue-on-error: true
         with:
-          type: now
-          from_branch: release
-          target_branch: develop
-          github_token: ${{ github.token }}
+          fetch-depth: 0
+        run: |
+          git checkout develop
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git merge release -q -m "Merged by GitHub action"
+          git push
 
       - name: Notify release to develop failure
         uses: ravsamhq/notify-slack-action@v1
