@@ -1,1 +1,1 @@
-Edit from main-release value
+Edit from release value
